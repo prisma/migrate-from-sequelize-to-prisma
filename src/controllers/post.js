@@ -21,10 +21,9 @@ const addPostToCategory = async (req, res) => {
 
         const updatedPost = await post.addCategory(category)
 
-        console.log(updatedPost.toJSON())
-
         return res.json(updatedPost)
     } catch (error) {
+        console.log({ error })
         return res.status(500).json(error)
     }
 }

@@ -34,16 +34,15 @@ const setUserBio = async (req, res) => {
     try {
         const user = await User.findOne({
             where: {
-                id: userId
+                id: Number(userId)
             }
         })
 
-        user.profile.bio = bio
+        const updatedUser = await user.createProfile({ bio })
 
-        const userBio = await Profile.create(user)
-
-        return res.json(userBio)
+        return res.json(updatedUser)
     } catch (error) {
+        console.log(error)
         return res.status(500).json(error)
     }
 }
