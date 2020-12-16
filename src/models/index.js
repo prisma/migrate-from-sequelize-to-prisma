@@ -7,7 +7,7 @@ const basename = path.basename(__filename)
 const sequelize = new Sequelize('sequelize_db', 'postgres', 'admin', {
   host: 'localhost',
   dialect: 'postgres',
-  logging: false
+  logging: true
 })
 
 const db = {}

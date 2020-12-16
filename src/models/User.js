@@ -1,24 +1,20 @@
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
-    },
     name: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     email: {
       type: DataTypes.STRING,
-      unique: true
+      unique: true,
+      allowNull: false
     },
   });
 
   User.associate = models => {
     User.hasMany(models.Post, {
-      foreignKey: 'author'
+      foreignKey: 'authorId',
+      as: 'posts'
     });
     User.hasOne(models.Profile, {
       onDelete: 'CASCADE',
