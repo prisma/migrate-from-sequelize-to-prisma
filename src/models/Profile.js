@@ -7,7 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     })
     Profile.associate = models => {
         Profile.belongsTo(models.User, {
-            foreignKey: 'userId'
+            foreignKey: 'userId',
+            as: 'user'
         })
     }
     return Profile

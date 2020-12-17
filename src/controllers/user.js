@@ -47,7 +47,14 @@ const setUserBio = async (req, res) => {
     }
 }
 
+const getAuthors = async (req, res) => {
+    const users = await User.findAll({ include: 'profile' })
+
+    return res.json(users)
+}
+
 module.exports = {
     createUser,
-    setUserBio
+    setUserBio,
+    getAuthors
 }

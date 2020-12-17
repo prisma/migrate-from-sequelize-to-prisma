@@ -8,7 +8,7 @@ const {
     createCategory,
     publishDraft
 } = require('./controllers/post')
-const { createUser, setUserBio } = require('./controllers/user')
+const { createUser, setUserBio, getAuthors } = require('./controllers/user')
 const router = express.Router()
 
 router.get('/feed', feed)
@@ -28,5 +28,7 @@ router.get('/filterPosts', filterPosts)
 router.get('/post/:postId', getPostById)
 
 router.post('/category', createCategory)
+
+router.get('/authors', getAuthors)
 
 module.exports = router
