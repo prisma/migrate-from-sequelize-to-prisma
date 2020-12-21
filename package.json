@@ -4,14 +4,16 @@
   "description": "Awesome project using Sequelize",
   "repository": "https://github.com/prisma/migrate-from-sequelize",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "format": "prettier --write \"**/*.+(js|md)\""
   },
   "license": "MIT",
   "dependencies": {
-    "express": "^4.17.1",
-    "pg": "^8.5.1",
-    "pg-hstore": "^2.3.3",
-    "sequelize": "^6.3.5"
+    "@prisma/client": "^2.13.1",
+    "express": "^4.17.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@prisma/cli": "^2.13.1",
+    "prettier": "^2.2.1"
+  }
 }

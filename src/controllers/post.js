@@ -1,5 +1,4 @@
-const { Post, User, Category } = require('../models')
-const { Op } = require('sequelize')
+const prisma = require("../prisma")
 
 /**
  * PUT /addPostToCategory
@@ -8,39 +7,44 @@ const { Op } = require('sequelize')
  * categoryId string
  */
 const addPostToCategory = async (req, res) => {
-    const { postId, categoryId } = req.query
+  const { postId, categoryId } = req.query
 
-    try {
-        const post = await Post.findOne({
-            where: { id: postId }
-        })
+  try {
+    const post = await prisma.posts.update({
+      data: {
+        postsToCategories: {
+          create: {
+            category: {
+              connect: { id: categoryId },
+            },
+          },
+        },
+      },
+      where: {
+        id: postId,
+      },
+    })
 
-        const category = await Category.findOne({
-            where: { id: categoryId }
-        })
-
-        const updatedPost = await post.addCategory(category)
-
-        return res.json(updatedPost)
-    } catch (error) {
-        console.log({ error })
-        return res.status(500).json(error)
-    }
+    return res.json(post)
+  } catch (error) {
+    console.log({ error })
+    return res.status(500).json(error)
+  }
 }
 
 /**
  * GET /feed
  */
 const feed = async (req, res) => {
-    try {
-        const feed = await Post.findAll({
-            where: { published: true },
-            include: ['author', 'categories']
-        })
-        return res.json(feed)
-    } catch (error) {
-        return res.status(500).json(error)
-    }
+  try {
+    const feed = await prisma.posts.findMany({
+      where: { published: true },
+      include: { author: true, categories: true },
+    })
+    return res.json(feed)
+  } catch (error) {
+    return res.status(500).json(error)
+  }
 }
 
 /**
@@ -51,57 +55,51 @@ const feed = async (req, res) => {
  * authorEmail: string
  */
 const createDraft = async (req, res) => {
-    const { title, content, authorEmail } = req.body
+  const { title, content, authorEmail } = req.body
 
-    try {
-        const user = await User.findOne({ email: authorEmail })
+  try {
+    const draft = await prisma.posts.create({
+      data: {
+        title,
+        content,
+        author: {
+          connect: { email: authorEmail },
+        },
+      },
+    })
 
-        const draft = await Post.create({
-            title,
-            content,
-            authorId: user.id,
-        })
-
-        res.json(draft)
-
-    } catch (error) {
-        return res.status(500).json(error)
-    }
-
+    res.json(draft)
+  } catch (error) {
+    return res.status(500).json(error)
+  }
 }
 
 /**
- * GET 
+ * GET
  * query string
  * searchString: string - optional
  */
 const filterPosts = async (req, res) => {
-    const { searchString } = req.query
+  const { searchString } = req.query
 
-    try {
-        const searchedPost = await Post.findAll({
-            where: {
-                [Op.or]: [
-                    {
-                        title: {
-                            [Op.like]: `%${searchString}%`
-                        }
-                    },
-                    {
-                        content: {
-                            [Op.like]: `%${searchString}%`
-                        }
-                    }
-                ]
-            },
-            include: 'author'
-        })
+  try {
+    const filteredPosts = prisma.posts.findMany({
+      where: {
+        OR: [
+          {
+            title: { contains: searchString },
+          },
+          {
+            content: { contains: searchString },
+          },
+        ],
+      },
+    })
 
-        res.json(searchedPost)
-    } catch (error) {
-        return res.status(500).json(error)
-
-    }
+    res.json(filteredPosts)
+  } catch (error) {
+    return res.status(500).json(error)
+  }
 }
 
 /**
@@ -110,19 +108,18 @@ const filterPosts = async (req, res) => {
  * postId
  */
 const getPostById = async (req, res) => {
-    const { postId } = req.params
+  const { postId } = req.params
 
-    try {
-        const post = await Post.findOne({
-            where: { id: postId },
-            include: 'author'
-        })
+  try {
+    const post = await prisma.posts.findUnique({
+      where: { id: postId },
+      include: { author: true },
+    })
 
-        return res.json(post)
-    } catch (error) {
-        return res.status(500).json(error)
-
-    }
+    return res.json(post)
+  } catch (error) {
+    return res.status(500).json(error)
+  }
 }
 
 /**
@@ -131,20 +128,20 @@ const getPostById = async (req, res) => {
  * query param number
  */
 const publishDraft = async (req, res) => {
-    const { postId } = req.params
+  const { postId } = req.params
 
-    try {
-        const post = await Post.findOne({
-            where: { id: postId }
-        })
-        post.published = true
+  try {
+    const post = await prisma.posts.findUnique({
+      where: { id: postId },
+    })
+    post.published = true
 
-        post.save()
+    post.save()
 
-        return res.json(post)
-    } catch (error) {
-        return res.status(500).json(error)
-    }
+    return res.json(post)
+  } catch (error) {
+    return res.status(500).json(error)
+  }
 }
 
 /**
@@ -153,23 +150,24 @@ const publishDraft = async (req, res) => {
  * name: string
  */
 const createCategory = async (req, res) => {
-    const { name } = req.body
+  const { name } = req.body
 
-    try {
-        const category = await Category.create({ name })
-
-        return res.json(category)
-    } catch (error) {
-        return res.status(500).json(error)
-    }
+  try {
+    const category = await prisma.categories.create({
+      data: { name },
+    })
+    return res.json(category)
+  } catch (error) {
+    return res.status(500).json(error)
+  }
 }
 
 module.exports = {
-    addPostToCategory,
-    feed,
-    createDraft,
-    filterPosts,
-    getPostById,
-    createCategory,
-    publishDraft
+  addPostToCategory,
+  feed,
+  createDraft,
+  filterPosts,
+  getPostById,
+  createCategory,
+  publishDraft,
 }

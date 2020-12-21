@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Categories {
+  id             Int              @id @default(autoincrement())
+  name           String
+  createdAt      DateTime
+  updatedAt      DateTime
+  PostCategories PostCategories[]
+
+  @@map("category")
+}
+
+model PostCategories {
+  createdAt  DateTime
+  updatedAt  DateTime
+  CategoryId Int
+  PostId     Int
+  Categories Categories @relation(fields: [CategoryId], references: [id])
+  Posts      Posts      @relation(fields: [PostId], references: [id])
+
+  @@id([CategoryId, PostId])
+  @@map("PostCategories")
+}
+
+model Posts {
+  id             Int              @id @default(autoincrement())
+  title          String
+  content        String?
+  published      Boolean?         @default(false)
+  createdAt      DateTime
+  updatedAt      DateTime
+  authorId       Int?
+  Users          Users?           @relation(fields: [authorId], references: [id])
+  PostCategories PostCategories[]
+
+  @@map("post")
+}
+
+model Profiles {
+  id        Int      @id @default(autoincrement())
+  bio       String
+  createdAt DateTime
+  updatedAt DateTime
+  userId    Int?
+  Users     Users?   @relation(fields: [userId], references: [id])
+
+  @@map("profile")
+}
+
+model SequelizeMeta {
+  name String @id
+}
+
+model Users {
+  id        Int       @id @default(autoincrement())
+  name      String?
+  email     String    @unique
+  createdAt DateTime
+  updatedAt DateTime
+  Posts     Posts[]
+  Profiles  Profiles?
+
+  @@map("user")
+}
