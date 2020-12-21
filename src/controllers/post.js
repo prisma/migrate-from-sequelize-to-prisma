@@ -10,7 +10,7 @@ const addPostToCategory = async (req, res) => {
   const { postId, categoryId } = req.query
 
   try {
-    const post = await prisma.posts.update({
+    const post = await prisma.post.update({
       data: {
         postsToCategories: {
           create: {
@@ -37,9 +37,9 @@ const addPostToCategory = async (req, res) => {
  */
 const feed = async (req, res) => {
   try {
-    const feed = await prisma.posts.findMany({
+    const feed = await prisma.post.findMany({
       where: { published: true },
-      include: { author: true, categories: true },
+      include: { author: true, category: true },
     })
     return res.json(feed)
   } catch (error) {
@@ -58,7 +58,7 @@ const createDraft = async (req, res) => {
   const { title, content, authorEmail } = req.body
 
   try {
-    const draft = await prisma.posts.create({
+    const draft = await prisma.post.create({
       data: {
         title,
         content,
@@ -83,7 +83,7 @@ const filterPosts = async (req, res) => {
   const { searchString } = req.query
 
   try {
-    const filteredPosts = prisma.posts.findMany({
+    const filteredPosts = prisma.post.findMany({
       where: {
         OR: [
           {
@@ -111,7 +111,7 @@ const getPostById = async (req, res) => {
   const { postId } = req.params
 
   try {
-    const post = await prisma.posts.findUnique({
+    const post = await prisma.post.findUnique({
       where: { id: postId },
       include: { author: true },
     })
@@ -131,7 +131,7 @@ const publishDraft = async (req, res) => {
   const { postId } = req.params
 
   try {
-    const post = await prisma.posts.findUnique({
+    const post = await prisma.post.findUnique({
       where: { id: postId },
     })
     post.published = true
@@ -153,7 +153,7 @@ const createCategory = async (req, res) => {
   const { name } = req.body
 
   try {
-    const category = await prisma.categories.create({
+    const category = await prisma.category.create({
       data: { name },
     })
     return res.json(category)

@@ -9,12 +9,13 @@ const createUser = async (req, res) => {
   const { name, email } = req.body
 
   try {
-    const user = await prisma.users.create({
+    const user = await prisma.user.create({
       data: {
         name,
         email,
       },
     })
+    console.log(user)
 
     return res.json(user)
   } catch (error) {
@@ -32,7 +33,7 @@ const setUserBio = async (req, res) => {
   const { bio } = req.body
 
   try {
-    const user = await prisma.users.update({
+    const user = await prisma.user.update({
       where: { id: userId },
       data: {
         profile: {
@@ -51,7 +52,11 @@ const setUserBio = async (req, res) => {
 }
 
 const getAuthors = async (req, res) => {
-  const users = await prisma.user.findMany({ include: "profile" })
+  const users = await prisma.user.findMany({
+    include: {
+      profile: true,
+    },
+  })
 
   return res.json(users)
 }

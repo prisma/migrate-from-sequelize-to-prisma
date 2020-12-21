@@ -7,65 +7,65 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Categories {
-  id             Int              @id @default(autoincrement())
+model Category {
+  id             Int                @id @default(autoincrement())
   name           String
   createdAt      DateTime
   updatedAt      DateTime
-  PostCategories PostCategories[]
+  PostCategories PostToCategories[]
 
-  @@map("category")
+  @@map("Categories")
 }
 
-model PostCategories {
+model PostToCategories {
   createdAt  DateTime
   updatedAt  DateTime
   CategoryId Int
   PostId     Int
-  Categories Categories @relation(fields: [CategoryId], references: [id])
-  Posts      Posts      @relation(fields: [PostId], references: [id])
+  Categories Category @relation(fields: [CategoryId], references: [id])
+  Posts      Post     @relation(fields: [PostId], references: [id])
 
   @@id([CategoryId, PostId])
   @@map("PostCategories")
 }
 
-model Posts {
-  id             Int              @id @default(autoincrement())
+model Post {
+  id             Int                @id @default(autoincrement())
   title          String
   content        String?
-  published      Boolean?         @default(false)
+  published      Boolean?           @default(false)
   createdAt      DateTime
   updatedAt      DateTime
   authorId       Int?
-  Users          Users?           @relation(fields: [authorId], references: [id])
-  PostCategories PostCategories[]
+  Users          User?              @relation(fields: [authorId], references: [id])
+  PostCategories PostToCategories[]
 
-  @@map("post")
+  @@map("Posts")
 }
 
-model Profiles {
+model Profile {
   id        Int      @id @default(autoincrement())
   bio       String
   createdAt DateTime
   updatedAt DateTime
   userId    Int?
-  Users     Users?   @relation(fields: [userId], references: [id])
+  Users     User?    @relation(fields: [userId], references: [id])
 
-  @@map("profile")
+  @@map("Profiles")
 }
 
 model SequelizeMeta {
   name String @id
 }
 
-model Users {
-  id        Int       @id @default(autoincrement())
+model User {
+  id        Int      @id @default(autoincrement())
   name      String?
-  email     String    @unique
+  email     String   @unique
   createdAt DateTime
   updatedAt DateTime
-  Posts     Posts[]
-  Profiles  Profiles?
+  Posts     Post[]
+  Profiles  Profile?
 
-  @@map("user")
+  @@map("Users")
 }
