@@ -15,7 +15,6 @@ const createUser = async (req, res) => {
         email,
       },
     })
-    console.log(user)
 
     return res.json(user)
   } catch (error) {
@@ -34,19 +33,16 @@ const setUserBio = async (req, res) => {
 
   try {
     const user = await prisma.user.update({
-      where: { id: userId },
+      where: { id: Number(userId) },
       data: {
         profile: {
-          update: {
-            bio,
-          },
+          create: { bio },
         },
       },
     })
 
     return res.json(user)
   } catch (error) {
-    console.log(error)
     return res.status(500).json(error)
   }
 }
