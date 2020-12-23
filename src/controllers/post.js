@@ -12,9 +12,9 @@ const addPostToCategory = async (req, res) => {
   try {
     const post = await prisma.post.update({
       data: {
-        PostToCategories: {
+        postToCategories: {
           create: {
-            Categories: {
+            categories: {
               connect: { id: Number(categoryId) },
             },
           },
@@ -38,7 +38,7 @@ const feed = async (req, res) => {
   try {
     const feed = await prisma.post.findMany({
       where: { published: true },
-      include: { author: true, PostToCategories: true },
+      include: { author: true, postToCategories: true },
     })
     return res.json(feed)
   } catch (error) {

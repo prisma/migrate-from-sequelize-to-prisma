@@ -12,7 +12,7 @@ model Category {
   name           String
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
-  PostCategories PostToCategories[]
+  postCategories PostToCategories[]
 
   @@map("Categories")
 }
@@ -20,12 +20,12 @@ model Category {
 model PostToCategories {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  CategoryId Int
-  PostId     Int
-  Categories Category @relation(fields: [CategoryId], references: [id])
-  posts      Post     @relation(fields: [PostId], references: [id])
+  categoryId Int
+  postId     Int
+  categories Category @relation(fields: [categoryId], references: [id])
+  posts      Post     @relation(fields: [postId], references: [id])
 
-  @@id([CategoryId, PostId])
+  @@id([categoryId, postId])
   @@map("PostCategories")
 }
 
@@ -38,7 +38,7 @@ model Post {
   updatedAt        DateTime           @updatedAt
   authorId         Int?
   author           User?              @relation(fields: [authorId], references: [id])
-  PostToCategories PostToCategories[]
+  postToCategories PostToCategories[]
 
   @@map("Posts")
 }
