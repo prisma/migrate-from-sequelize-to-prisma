@@ -2,7 +2,7 @@
   "name": "BlogSequelize",
   "version": "0.0.1",
   "description": "Awesome project using Sequelize",
-  "repository": "https://github.com/prisma/migrate-from-sequelize",
+  "repository": "https://github.com/prisma/migrate-from-sequelize-to-prisma",
   "scripts": {
     "start": "node src/index.js"
   },
